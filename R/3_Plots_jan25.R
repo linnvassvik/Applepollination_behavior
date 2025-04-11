@@ -120,7 +120,7 @@ Species_accumulation <- accum_df %>%
 
 
 SpeciesData <- ggarrange(VennTraps2, Species_accumulation, widths = c(3.5, 5))
-ggsave(SpeciesData, filename = "Figures/SpeciesData.jpeg", height = 10, width = 16)
+ggsave(SpeciesData, filename = "Figures/SpeciesData.jpeg", height = 10, width = 15)
 
 # Behaviour ---------------------------------------------------------------
 
@@ -192,7 +192,7 @@ Behaviour2 <- ggarrange(ggarrange(Foraging, Stigma, ncol = 2),
                         nrow = 2,
                         heights = c(1, 1))
 
-ggsave(Behaviour2, filename = "Figures/Behaviour2.jpeg", height = 10, width = 16)
+ggsave(Behaviour2, filename = "Figures/Behaviour2.jpeg", height = 14, width = 14)
 
 
 
@@ -248,7 +248,7 @@ BBDOY <- Behaviour_stigma2 %>%
         plot.title = element_text(hjust = 0.5, size = 22))
 
 StigmaDOY <- ggarrange(HBDOY, BBDOY, SBDOY, nrow = 1)
-ggsave(StigmaDOY, filename = "Figures/StigmaDOY.png", height = 10, width = 14)
+ggsave(StigmaDOY, filename = "Figures/StigmaDOY.png", height = 14, width = 14)
 
 
 
@@ -287,7 +287,7 @@ genus_colors2 <- c("Andrena" = "#8c510a", "Hylaeus" = "#80cdc1", "Apis" = "#bf81
 
 ### GENUS
 
-SpeciesBerle <- OnlyPollinators %>%
+GenusBerle <- OnlyPollinators %>%
   filter(Location == 'Berle') %>% 
   count(Genus, name = "count") %>%
   mutate(Genus = factor(Genus, levels = c("Halictus", "Hylaeus", "Hoplitis", "Osmia", "Lasioglossum", "Andrena", "Bombus", "Apis"))) %>%
@@ -306,7 +306,7 @@ SpeciesBerle <- OnlyPollinators %>%
         plot.title = element_text(size = 18, face = "bold")) +
   xlim(0,110)
 
-SpeciesHøyen <- OnlyPollinators %>%
+GenusHøyen <- OnlyPollinators %>%
   filter(Location == 'Høyen') %>% 
   count(Genus, name = "count") %>%
   mutate(Genus = factor(Genus, levels = c("Halictus", "Hylaeus", "Hoplitis", "Osmia", "Lasioglossum", "Andrena", "Bombus", "Apis"))) %>% 
@@ -326,7 +326,7 @@ SpeciesHøyen <- OnlyPollinators %>%
   xlim(0,110)
 
 
-SpeciesSando <- OnlyPollinators %>%
+GenusSando <- OnlyPollinators %>%
   filter(Location == 'Sando') %>% 
   count(Genus, name = "count") %>%
   mutate(Genus = factor(Genus, levels = c("Halictus", "Hylaeus", "Hoplitis", "Osmia", "Lasioglossum", "Andrena", "Bombus", "Apis"))) %>%
@@ -346,7 +346,7 @@ SpeciesSando <- OnlyPollinators %>%
         plot.title = element_text(size = 18, face = "bold")) +
   xlim(0,110)
 
-SpeciesLofthus <- OnlyPollinators %>%
+GenusLofthus <- OnlyPollinators %>%
   filter(Location == 'Lofthus') %>% 
   count(Genus, name = "count") %>%
   mutate(Genus = factor(Genus, levels = c("Halictus", "Hylaeus", "Hoplitis", "Osmia", "Lasioglossum", "Andrena", "Bombus", "Apis"))) %>%
@@ -365,7 +365,7 @@ SpeciesLofthus <- OnlyPollinators %>%
         plot.title = element_text(size = 18, face = "bold")) +
   xlim(0,110)
 
-SpeciesUrheim <- OnlyPollinators %>%
+GenusUrheim <- OnlyPollinators %>%
   filter(Location == 'Urheim') %>% 
   count(Genus, name = "count") %>%
   mutate(Genus = factor(Genus, levels = c("Halictus", "Hylaeus", "Hoplitis", "Osmia", "Lasioglossum", "Andrena", "Bombus", "Apis"))) %>%
@@ -384,7 +384,7 @@ SpeciesUrheim <- OnlyPollinators %>%
         plot.title = element_text(size = 18, face = "bold")) +
   xlim(0,110)
 
-SpeciesDjønno <- OnlyPollinators %>%
+GenusDjønno <- OnlyPollinators %>%
   filter(Location == 'Djønno') %>% 
   count(Genus, name = "count") %>%
   mutate(Genus = factor(Genus, levels = c("Halictus", "Hylaeus", "Hoplitis", "Osmia", "Lasioglossum", "Andrena", "Bombus", "Apis"))) %>%
@@ -403,10 +403,10 @@ SpeciesDjønno <- OnlyPollinators %>%
         plot.title = element_text(size = 18, face = "bold"))
 
 
-SpeciesLocation <- ggarrange(SpeciesBerle, SpeciesLofthus, SpeciesHøyen, SpeciesUrheim, SpeciesSando, SpeciesDjønno,
+GenusLocation <- ggarrange(GenusBerle, GenusLofthus, GenusHøyen, GenusUrheim, GenusSando, GenusDjønno,
                              ncol = 2, nrow = 3)
 
-ggsave(SpeciesLocation, filename = "Figures/SpeciesLocation.jpeg", height = 15, width = 18)
+ggsave(GenusLocation, filename = "Figures/GenusLocation.jpeg", height = 14, width = 14)
 
 
 
@@ -639,9 +639,11 @@ OrchardStructurePlacement <- AppleDF1 %>%
   labs(fill = "Tree placement", color = "Tree placement", y = "Seed set (ratio)", x = "") +
   theme(axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
-        axis.title.y = element_text(size = 17))
+        axis.title.y = element_text(size = 17),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 14))
 
-ggsave(OrchardStructurePlacement, filename = "Figures/OrchardStructurePlacement.jpeg", height = 10, width = 12)
+ggsave(OrchardStructurePlacement, filename = "Figures/OrchardStructurePlacement.jpeg", height = 14, width = 14)
 
 
 
@@ -683,12 +685,14 @@ SeedSetPredicted <- ggplot(pred, aes(x = x, y = predicted, color = group, fill =
   theme(axis.text = element_text(size = 14),
         axis.title = element_text(size = 17),
         plot.title = element_text(face = "bold", size = 22),
-        legend.position = "bottom")
+        legend.position = "bottom",
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 14))
 
 
 
 SeedSetData <- ggarrange(SeedSetLocation, SeedSetPredicted, nrow = 2)
-ggsave(SeedSetData, filename = "Figures/SeedSetData.jpeg", height = 10, width = 10)
+ggsave(SeedSetData, filename = "Figures/SeedSetData.jpeg", height = 14, width = 14)
 
 
 
