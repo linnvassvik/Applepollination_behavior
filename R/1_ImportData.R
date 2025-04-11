@@ -335,60 +335,64 @@ StasSpecies %>%
   ungroup()
 
 
-species_RA <- StasSpecies %>%
-  group_by(Location, Where, Trap_color, date, Apple_variety) %>%
+# species_RA <- StasSpecies %>%
+#   group_by(Location, Where, Trap_color, date, Apple_variety) %>%
+#   summarise(
+#     Species_Richness = n_distinct(Species), 
+#     Abundance = n()) %>%
+#   ungroup()  
+# 
+# SpeciesDF2 <- species_RA %>%
+#   group_by(Apple_variety, Location) %>%
+#   summarise(across(where(is.numeric), mean, na.rm = TRUE), .groups = "drop") %>%
+#   ungroup()
+# 
+# AppleSpecies <- SpeciesDF2 %>%
+#   left_join(AppleDF2, by = c("Apple_variety", "Location")) %>%
+#   mutate(Location = as.factor(Location))
+
+####
+
+species_Richness <- StasSpecies %>%
+  group_by(Location, Apple_variety) %>%
   summarise(
     Species_Richness = n_distinct(Species), 
     Abundance = n()) %>%
-  ungroup()  
+  ungroup() 
 
-SpeciesDF2 <- species_RA %>%
-  group_by(Apple_variety, Location) %>%
-  summarise(across(where(is.numeric), mean, na.rm = TRUE), .groups = "drop") %>%
-  ungroup()
 
-AppleSpecies <- SpeciesDF2 %>%
-  left_join(AppleDF2, by = c("Apple_variety", "Location")) %>%
+RichnessSeedSet <- AppleDF1 %>% 
+  left_join(species_Richness, by = c("Apple_variety", "Location")) %>%
   mutate(Location = as.factor(Location))
 
 
 
-#Abundance
-PollTot <- Abundance_NoTrap %>%
-  left_join(appledfB_Tot, by = c("Location", "Apple_variety"))
-
-PollTotNoSpecies <- PollTot %>%
-  select(-c(3:39)) %>%
-  #select(-Region, -Year) %>%
-  mutate(Species_sum = as.double(Species_sum))
-
-
-#Richness
-TestSpecies3 <- OnlyPollinators %>% 
-  #filter(Where == 'Inside') %>% 
-  select(-c("Date_Start", "Date_Stop/Collected", "Date_ID", "ID", "Region", "Year")) %>% 
-  group_by(Location, Apple_variety, Where) %>% 
-  summarise(Nspecies = n_distinct(Species),
-            NApis = sum(Genus == "Apis"),
-            .groups = 'drop') %>% 
-  ungroup()
-
-
-PollTot2 <- TestSpecies3 %>% 
-  left_join(appledfB_Tot, by = c("Location", "Apple_variety"))
-
-
-PollTot_RA <- PollTot2 %>% 
-  left_join(PollTotNoSpecies, by = c("Location", "Apple_variety", "Region", "Orchard_structure", "seedset", "seed_success", "seed_fail", "seed_total", "seed_potential")) %>% 
-  mutate(Wildbee_sum = Species_sum - NApis)
-
-# #Genus
-# GenusPoll <- Abundance_Genus %>% 
-#   left_join(appledfB_Tot, by = c("Location", "Apple_variety")) %>% 
-#   select(-Year, -Region)
+# #Abundance
+# PollTot <- Abundance_NoTrap %>%
+#   left_join(appledfB_Tot, by = c("Location", "Apple_variety"))
 # 
-# #Group
-# GroupPoll <- Abundance_Group %>% 
-#   left_join(appledfB_Tot, by = c("Location", "Apple_variety")) %>% 
-#   select(-Year, -Region)
-
+# PollTotNoSpecies <- PollTot %>%
+#   select(-c(3:39)) %>%
+#   #select(-Region, -Year) %>%
+#   mutate(Species_sum = as.double(Species_sum))
+# 
+# 
+# #Richness
+# TestSpecies3 <- OnlyPollinators %>% 
+#   #filter(Where == 'Inside') %>% 
+#   select(-c("Date_Start", "Date_Stop/Collected", "Date_ID", "ID", "Region", "Year")) %>% 
+#   group_by(Location, Apple_variety, Where) %>% 
+#   summarise(Nspecies = n_distinct(Species),
+#             NApis = sum(Genus == "Apis"),
+#             .groups = 'drop') %>% 
+#   ungroup()
+# 
+# 
+# PollTot2 <- TestSpecies3 %>% 
+#   left_join(appledfB_Tot, by = c("Location", "Apple_variety"))
+# 
+# 
+# PollTot_RA <- PollTot2 %>% 
+#   left_join(PollTotNoSpecies, by = c("Location", "Apple_variety", "Region", "Orchard_structure", "seedset", "seed_success", "seed_fail", "seed_total", "seed_potential")) %>% 
+#   mutate(Wildbee_sum = Species_sum - NApis)
+# 

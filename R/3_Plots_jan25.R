@@ -1,4 +1,4 @@
-source("R/1_ImportData.R")
+source("R/2_Analysis_jan25")
 
 
 #library(broom) #?
@@ -7,6 +7,7 @@ library(ggplot2) #plots
 library(ggforce) #sina in ggplot
 library(ggpubr) #ggarrange
 library(ggvenn) #Venn diagram
+library(ggeffects) #predicted plot
 
 
 
@@ -644,14 +645,50 @@ ggsave(OrchardStructurePlacement, filename = "Figures/OrchardStructurePlacement.
 
 
 
+# Species richness and abundance predicted --------------------------------
+SeedSetLocation <- AppleDF %>%
+  ggplot(aes(y = (seed_success/seed_total), 
+             x = fct_reorder(Location, mean_seed))) +
+  geom_violin(fill = "#D39CA2", alpha = 0.5) +
+  geom_sina(color = "#D39CA2") +
+  theme_minimal() +
+  stat_summary(fun = mean, geom = "point", color = "black", size = 3) +
+  labs(y = "Seed set (ratio)", x = "", title = "a") +
+  theme(axis.text = element_text(size = 14),
+        axis.title = element_text(size = 17),
+        plot.title = element_text(face = "bold", size = 22))
 
 
 
+pred <- ggpredict(RichAbSS, terms = c("Species_Richness", "Abundance [20,300]"))
+
+#sort(unique(RichnessSeedSet$Abundance), decreasing = TRUE)
+
+SeedSetPredicted <- ggplot(pred, aes(x = x, y = predicted, color = group, fill = group)) +
+  geom_line(size = 1.2) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.2, color = NA) +
+  scale_color_manual(
+    values = c("20" = "#9CC5A1", "300" = "#304828"),
+    labels = c("Low (20)", "High (300)")) +
+  scale_fill_manual(
+    values = c("20" = "#9CC5A1", "300" = "#304828"),
+    labels = c("Low (20)", "High (300)")) +
+  labs(x = "Species richness",
+    y = "Seed set (ratio)",
+    color = "Relative abundance",
+    fill = "Relative abundance",
+    title = "b") +
+  scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1.0), limits = c(0, 1)) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 14),
+        axis.title = element_text(size = 17),
+        plot.title = element_text(face = "bold", size = 22),
+        legend.position = "bottom")
 
 
 
-
-
+SeedSetData <- ggarrange(SeedSetLocation, SeedSetPredicted, nrow = 2)
+ggsave(SeedSetData, filename = "Figures/SeedSetData.jpeg", height = 10, width = 10)
 
 
 

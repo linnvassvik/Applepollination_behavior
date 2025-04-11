@@ -136,15 +136,20 @@ DesignTree <- summary(pairwise_comparisons3)
 
 
 # Seed set and species richness and abundance -----------------------------
-AppleSpecies$seed_success <- round(AppleSpecies$seed_success)
-AppleSpecies$seed_fail <- round(AppleSpecies$seed_fail)
-AppleSpecies$seed_total <- round(AppleSpecies$seed_total)
+# AppleSpecies$seed_success <- round(AppleSpecies$seed_success)
+# AppleSpecies$seed_fail <- round(AppleSpecies$seed_fail)
+# AppleSpecies$seed_total <- round(AppleSpecies$seed_total)
 
 RichAbSS <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness * Abundance + (1|Location),
-                  family = binomial(link = "logit"),
-                  data = AppleSpecies)
+                  family = betabinomial(link = "logit"),
+                  data = RichnessSeedSet)
 
 
 
 summary(RichAbSS)
-check_model(RichAbSS2)
+check_model(RichAbSS)
+
+
+
+
+
