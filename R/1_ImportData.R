@@ -6,6 +6,7 @@ library(lme4)
 library(emmeans)
 library(vegan)
 
+
 ###### INSECT CAUGHT IN PAN AND VANE TRAPS
 
 # INSECT CAUGHT IN PAN AND VANE TRAPS -------------------------------------
@@ -28,7 +29,7 @@ OnlyPollinators <- PanVane2023 %>%
 
 
 
-# APPLE DATA FOR 2023 ONLY ------------------------------------------------
+# APPLE DATA FOR 2023  ------------------------------------------------
 
 
 AppleDataB1 <- read_excel("Data/AQ_22+23.xlsx") %>% 
@@ -148,38 +149,6 @@ Abundance_Group <- OnlyPollinators %>%
   rowwise()
 
 
-
-
-
-
-
-# # Unsure what this is for. Probably NMDS which we cut out -----------------
-# 
-# 
-# 
-# PollSpecies <- left_join(appledfB, Poll2, 
-#                        by = c("Location", "Apple_variety")) %>% 
-#   ungroup() %>% 
-#   select(-Year, -Region, -weight, -seedset, -fruitset)
-# 
-# Poll_Species2 <- PollSpecies %>% 
-#   select(-Apple_variety, Location) %>% 
-#   mutate(Location_numeric = as.numeric(factor(Location))) %>%
-#   relocate(Location_numeric, .after = 2) 
-# 
-# data_1 <- Poll_Species2 %>% 
-#   select(-Location, -Location_numeric) %>% 
-#   select(-'Andrena', -'Andrena tibiailis', -'Andrena bicolor', -'Andrena lathyri', -'Andrena semilaevis', -'Andrena ruficrus', -'Bombus sylvestris', -"Bombus sylvarum", -'Osmia bicornis', -'Osmia parietina', -'Osmia bicolor', -'Hylaeus sp.', -'Hylaeus incongruus', -'Hoplitis claviventris') #remove with 2 or less registrations
-# 
-# data_1a <- Poll_Species2 %>% 
-#   select(-Location, -Location_numeric) %>% 
-#   select(-'Andrena', -'Andrena tibiailis', -'Andrena bicolor', -'Osmia bicornis', -'Osmia parietina', -'Hoplitis claviventris', -'Bombus ruderarius', -'Andrena subopaca', -'Bombus lapidarius') #remove with 2 or less registrations
-# 
-# # -'Bombus sylvarum', 
-# 
-# 
-# 
-# 
 
 # Difference between vanetrap and pantrap ---------------------------------
 
@@ -383,19 +352,6 @@ AppleSpecies <- SpeciesDF2 %>%
   mutate(Location = as.factor(Location))
 
 
-
-#Check what is needed here
-
-# appledfB_Tot <- appledf %>%
-#   arrange(Location, Apple_variety) %>%
-#   select(-Year, -fruitset, -weight, -Region, -apple_success , -apple_fail) %>%
-#   mutate(seed_total = seed_success + seed_fail) %>%
-#   mutate(seed_potential = seed_success / seed_total)
-# 
-# 
-# PollinatorsTot <- OnlyPollinators %>%
-#   #filter(Where == 'Inside') %>%
-#   select(-Date_Start, -`Date_Stop/Collected`, -Date_ID, -Group, -Genus, -Trap_color, -Year, -ID, -Trap_type, -Region, -Where)
 
 #Abundance
 PollTot <- Abundance_NoTrap %>%
