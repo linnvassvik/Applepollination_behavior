@@ -52,7 +52,8 @@ Behaviour_foraging <- Behaviour_foraging %>%
 
 ForagingTime <- glmmTMB(log(Forage_time_s) ~ Subject + (1|Location), 
                         data = Behaviour_foraging, 
-                        family = gaussian())
+                        family = gaussian)
+
 summary(ForagingTime)
 
 emm <- emmeans(ForagingTime, ~ Subject)
@@ -68,6 +69,7 @@ StigmaContact <- glmmTMB(cbind(stigma_contact, no_stigma_contact) ~ Subject + (1
 
 
 summary(StigmaContact)
+check_model(StigmaContact)
 
 
 emm <- emmeans(StigmaContact, ~ Subject)
@@ -97,9 +99,10 @@ summary(pairwise_comparisons)
 
 Distance <- glmmTMB(log(percentage) ~ Behavior * Subject + (1|Location), 
                      data = Behaviour4, 
-                     family = gaussian())
+                     family = gaussian)
 
 summary(Distance)
+
 
 emm <- emmeans(Distance, ~ Behavior * Subject)
 pairwise_comparisons <- contrast(emm, method = "pairwise", adjust = "tukey")
