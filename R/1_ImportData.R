@@ -193,9 +193,7 @@ species_df <- data.frame(
 Behaviour <- read_excel("Data/Behaviour_Jan25_both.xlsx") %>%
   select(-Comment, -Comment2, -Length)
 
-Behaviour %>%
-  group_by(Subject) %>%  # Group by Subject (bee type)
-  summarise(unique_IDs = n_distinct(ID))
+
 
 Behaviour <- Behaviour %>%
   mutate(Location = case_when(

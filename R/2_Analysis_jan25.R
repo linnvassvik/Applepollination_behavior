@@ -110,8 +110,9 @@ summary(pairwise_comparisons)
 
 
 
-# Seed set and location, orchard design and tree placement --------------------------
-#Seed set varies between locations
+# Seed set and location, orchard design and tree placement ------------------
+# Seed set varies between locations ---------------------------------------
+
 LocationSS <- glmmTMB(cbind(seed_success, seed_fail) ~ Location,
                       family = betabinomial(link = "logit"),
                       data = AppleDF1)
@@ -154,5 +155,18 @@ check_model(RichAbSS)
 
 
 
+# General  ----------------------------------------------------------------
 
+Behaviour %>%
+  group_by(Subject) %>% 
+  summarise(unique_IDs = n_distinct(ID))
+
+Behaviour %>%
+  filter(Category == "Foraging") %>%
+  group_by(Subject) %>%
+  summarise(
+    n_visits = n(),
+    unique_IDs = n_distinct(ID),
+    visits_per_bee = n_visits / unique_IDs,
+    .groups = "drop")
 
