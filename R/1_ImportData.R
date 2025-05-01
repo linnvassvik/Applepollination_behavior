@@ -282,6 +282,15 @@ Behaviour4 <- Behaviour %>%
   left_join(Behaviour_distance %>% group_by(Subject) %>% summarise(total_count = n()), by = "Subject") %>%
   mutate(percentage = (count / total_count) * 100)
 
+Behaviour5 <- Behaviour %>%
+  filter(Category == 'Travel distance') %>%
+  group_by(ID, Subject, Location) %>%
+  mutate(total_count = n()) %>%  # Calculate total count per Bee
+  ungroup() %>%
+  group_by(Behavior, Subject, ID, Location) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  left_join(Behaviour_distance %>% group_by(Subject, ID) %>% summarise(total_count = n()), by = c("Subject", "ID")) %>%
+  mutate(percentage = (count / total_count) * 100)
 
 # Orchard design and tree placement data ------------------------------
 
