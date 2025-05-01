@@ -250,8 +250,9 @@ BORIS_distance2 <- Behaviour %>%
   ungroup() %>%
   group_by(Behavior, Subject) %>%
   summarise(count = n(), .groups = 'drop') %>%
-  left_join(Behaviour_distance %>% group_by(Subject) %>% summarise(total_count = n()), by = "Subject") %>%
+  left_join(Behaviour_distance %>% group_by(Subject) %>% summarise(total_count = n()), by = c("Subject")) %>%
   mutate(percentage = (count / total_count) * 100)
+
 
 BORIS_distance2 <- BORIS_distance2 %>%
   mutate(Behavior = factor(
@@ -259,8 +260,6 @@ BORIS_distance2 <- BORIS_distance2 %>%
     levels = c("New flower same tree", "New tree", "New row"),
     labels = c("New flower same tree", "New tree", "New row/further")
   ))
-
-
 
 
 

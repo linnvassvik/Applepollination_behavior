@@ -125,6 +125,17 @@ ggsave(SpeciesData, filename = "Figures/SpeciesData.jpeg", height = 10, width = 
 # Behaviour ---------------------------------------------------------------
 
 ## Stigma contact
+mean_props <- Behaviour_stigma %>%
+  mutate(stigma_contact = foraging_count - no_stigma_contact) %>% 
+  group_by(Subject) %>%
+  summarise(
+    total_stigma = sum(stigma_contact),
+    total_forage = sum(foraging_count),
+    mean_prop = (total_stigma / total_forage) * 100,  # now in %
+    .groups = "drop"
+  )
+
+
 Stigma <- Behaviour_stigma %>% 
   ggplot(aes(x = Subject, y = Percent_stigma_contact, fill = Subject, color = Subject)) + 
   #geom_jitter(size = 2, width = 0.1, alpha = 0.6, show.legend = FALSE) +  
@@ -132,7 +143,7 @@ Stigma <- Behaviour_stigma %>%
   geom_violin(alpha = 0.5) +  
   scale_fill_manual(values = c("#FFAC81", "#B74F6F", "#FEC3A6")) +
   scale_color_manual(values = c("#FFAC81","#B74F6F", "#FEC3A6")) +
-  stat_summary(fun = mean, geom = "point", color = "black",size = 3) +
+  geom_point(data = mean_props, aes(x = Subject, y = mean_prop), color = "black", size = 3) +
   labs(y = "Stigma contact (%)", x = "", fill = "Bee", title = "b") +
   scale_x_discrete(labels = c("Honeybee" = "Honeybees",
                               "Bumblebee" = "Bumblebees",
@@ -147,6 +158,16 @@ Stigma <- Behaviour_stigma %>%
 
 Behaviour_foraging$Forage_time_s <- as.numeric(Behaviour_foraging$Forage_time_s)
 
+mean_forage_time <- Behaviour_foraging %>%
+  group_by(Subject) %>%
+  summarise(
+    total_forage_time = sum(Forage_time_s, na.rm = TRUE),
+    total_visits = n(),
+    mean_forage_time_s = total_forage_time / total_visits,
+    se_forage_time_s = sd(Forage_time_s, na.rm = TRUE) / sqrt(total_visits),
+    .groups = "drop"
+  )
+
 Foraging <- Behaviour_foraging %>% 
   ggplot(aes(x = Subject, y = Forage_time_s, fill = Subject, color = Subject)) + 
   #geom_jitter(size = 2, width = 0.1, alpha = 0.6, show.legend = FALSE) +
@@ -154,7 +175,7 @@ Foraging <- Behaviour_foraging %>%
   geom_violin(alpha = 0.5) +
   scale_fill_manual(values = c("#FFAC81", "#B74F6F", "#FEC3A6")) +
   scale_color_manual(values = c("#FFAC81", "#B74F6F", "#FEC3A6")) +
-  stat_summary(fun = mean, geom = "point", color = "black",size = 3) + 
+  geom_point(data = mean_forage_time, aes(x = Subject, y = mean_forage_time_s), color = "black", size = 3) +
   labs(y = "Foraging time (s)", x = "", fill = "Bee", title = "a") +
   scale_x_discrete(labels = c("Honeybee" = "Honeybees",
                               "Bumblebee" = "Bumblebees",
@@ -169,15 +190,21 @@ Foraging <- Behaviour_foraging %>%
 Behaviour1 <- ggarrange(Foraging, Stigma)
 
 #Flight distance
+dodge <- position_dodge(width = 0.9)
+
 Distance <- BORIS_distance2 %>% 
   mutate(Subject = factor(Subject, levels = c("Honeybee", "Bumblebee", "Wild bee"))) %>%
-  ggplot(aes(x = Behavior, y = percentage, fill = Subject)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(y = "Foraging time (s)", x = "", fill = "Bee", title = "c") +
+  ggplot(aes(x = Behavior, y = percentage, fill = Subject, color = Subject)) +
+  geom_bar(stat = "identity", position = dodge, alpha = 0.8, color = NA) +
+  geom_bar(stat = "identity", position = dodge, fill = NA, aes(color = Subject), size = 2) +
+  labs(y = "Foraging time (s)", x = "", fill = "Bee", title = "c", color = "Bee") +
   scale_fill_manual(
     values = c("#B74F6F", "#FFAC81", "#FEC3A6"),
     labels = c("Honeybee" = "Honeybees", "Bumblebee" = "Bumblebees", "Wild bee" = "Solitary bees")) + 
-  labs(y = "Percentage of total observations", x = "", fill = "") +
+  scale_color_manual(
+    values = c("#B74F6F", "#FFAC81", "#FEC3A6"),
+    labels = c("Honeybee" = "Honeybees", "Bumblebee" = "Bumblebees", "Wild bee" = "Solitary bees")) +
+  labs(y = "Percentage of total observations", x = "", fill = "", color = "") +
   theme_minimal() +
   theme(axis.text = element_text(size = 14),
         axis.title = element_text(size = 17),
