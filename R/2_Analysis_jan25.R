@@ -98,20 +98,20 @@ summary(pairwise_comparisons)
 #Flight distance between each foraging visit
 
 Distance <- glmmTMB(log(percentage) ~ Behavior * Subject + (1|Location), 
-                     data = Behaviour4, 
+                     data = Behaviour5, 
                      family = gaussian)
 
 summary(Distance)
 
 
-emm <- emmeans(Distance, ~ Behavior * Subject)
+emm <- emmeans(Distance, ~ Behavior)
 pairwise_comparisons <- contrast(emm, method = "pairwise", adjust = "tukey")
 summary(pairwise_comparisons)
 
+#write_xlsx(DisttSubj, "Excel/DisttSubj.xlsx")
 
 
-# Seed set and location, orchard design and tree placement ------------------
-# Seed set varies between locations ---------------------------------------
+# Seed set varies between locations, orchard design and tree placement  --------
 
 LocationSS <- glmmTMB(cbind(seed_success, seed_fail) ~ Location,
                       family = betabinomial(link = "logit"),
@@ -161,12 +161,47 @@ Behaviour %>%
   group_by(Subject) %>% 
   summarise(unique_IDs = n_distinct(ID))
 
+#Number of visits per bee group
 Behaviour %>%
   filter(Category == "Foraging") %>%
+  group_by(Subject, ID) %>% 
+  summarise(n_events = n(), .groups = "drop") %>% 
   group_by(Subject) %>%
-  summarise(
-    n_visits = n(),
-    unique_IDs = n_distinct(ID),
-    visits_per_bee = n_visits / unique_IDs,
+  summarise(mean_events_per_visit = mean(n_events),
+    se_events_per_visit = sd(n_events) / sqrt(n()),
     .groups = "drop")
 
+
+#Foraging time per observation per bee group
+Behaviour %>%
+  filter(Category == "Foraging") %>%
+  mutate(Forage_time_s = as.numeric(Forage_time_s)) %>%
+  group_by(Subject) %>%
+  summarise(mean_forage_time_s = mean(Forage_time_s, na.rm = TRUE),
+    se_forage_time_s = sd(Forage_time_s, na.rm = TRUE) / sqrt(sum(!is.na(Forage_time_s))),
+    .groups = "drop")
+
+
+#Number of stigma contact per bee group
+Behaviour_stigma %>%
+  mutate(stigma_contact = foraging_count - no_stigma_contact) %>% 
+  group_by(Subject) %>%
+  summarise(
+    stigma_contact = sum(stigma_contact),
+    total_foraging = sum(foraging_count),
+    prop_stigma_contact = stigma_contact / total_foraging,
+    se_stigma_contact = sqrt((prop_stigma_contact * (1 - prop_stigma_contact)) / total_foraging),
+    .groups = "drop"
+  )
+
+
+#Movement between flowers, trees and rows/further
+Behaviour %>%
+  filter(Category == "Travel distance") %>%
+  group_by(Subject, Behavior) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  group_by(Subject) %>%
+  mutate(
+    total = sum(count),
+    percentage = (count / total) * 100,
+    se = sqrt((percentage * (100 - percentage)) / total))
