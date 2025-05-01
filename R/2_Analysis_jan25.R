@@ -108,7 +108,7 @@ emm <- emmeans(Distance, ~ Behavior)
 pairwise_comparisons <- contrast(emm, method = "pairwise", adjust = "tukey")
 summary(pairwise_comparisons)
 
-#write_xlsx(DisttSubj, "Excel/DisttSubj.xlsx")
+
 
 
 # Seed set varies between locations, orchard design and tree placement  --------
