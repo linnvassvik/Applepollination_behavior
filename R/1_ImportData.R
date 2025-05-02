@@ -341,13 +341,13 @@ StasSpecies %>%
   ungroup()
 
 
-# species_RA <- StasSpecies %>%
-#   group_by(Location, Where, Trap_color, date, Apple_variety) %>%
-#   summarise(
-#     Species_Richness = n_distinct(Species), 
-#     Abundance = n()) %>%
-#   ungroup()  
-# 
+species_RA <- StasSpecies %>%
+  group_by(Location, Where, Trap_color, date, Apple_variety) %>%
+  summarise(
+    Species_Richness = n_distinct(Species),
+    Abundance = n()) %>%
+  ungroup()
+
 # SpeciesDF2 <- species_RA %>%
 #   group_by(Apple_variety, Location) %>%
 #   summarise(across(where(is.numeric), mean, na.rm = TRUE), .groups = "drop") %>%

@@ -37,7 +37,7 @@ abundance_model2 <- glmmTMB(Abundance ~ Where + Trap_color + (1|Location),
 summary(abundance_model2)
 
 # Use emmeans to compute the marginal means
-emm <- emmeans(abundance_model2, ~ Where)
+emm <- emmeans(richness_model2, ~ Where)
 pairwise_comparisons <- contrast(emm, method = "pairwise", adjust = "tukey")
 summary(pairwise_comparisons)
 
