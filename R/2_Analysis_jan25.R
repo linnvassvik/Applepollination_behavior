@@ -149,8 +149,17 @@ RichAbSS <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness * Abundanc
                   data = RichnessSeedSet)
 
 
+#no HB
+RichAbSS2 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+                    family = betabinomial(link = "logit"),
+                    data = RichnessSeedSet2)
 
-summary(RichAbSS)
+#only HB
+RichAbSS3 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+                    family = betabinomial(link = "logit"),
+                    data = RichnessSeedSet3)
+
+summary(RichAbSS3)
 check_model(RichAbSS)
 
 
