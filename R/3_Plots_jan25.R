@@ -15,6 +15,14 @@ library(ggeffects) #predicted plot
 VennDiagram <- read_excel("Data/PanVane2023.xlsx") %>%
   select(-c(Date_Start, `Date_Stop/Collected`, Date_ID, ID, Region, Sex, Who, Where))
 
+# SpeciesCount <- VennDiagram %>%
+#   filter(!(Genus == "Sphecodes")) %>% 
+#   filter(!(Genus == "Nomada")) %>%
+#   count(Species, name = "Count") %>%
+#   arrange(desc(Count))
+# 
+# SpeciesCount %>%
+#   summarise(Total = sum(Count))
 
 VennDiagram2 <- VennDiagram %>%
   filter(!(Genus == "Sphecodes")) %>% 
@@ -657,7 +665,7 @@ OrchardStructurePlacement <- AppleDF1 %>%
   geom_sina() +
   geom_violin(alpha = 0.5, position = position_dodge(width = 0.9)) +
   theme_minimal() +
-  stat_summary(fun = median, geom = "point", aes(group = Placement), position = position_dodge(width = 0.9), color = "black", size = 3) +
+  stat_summary(fun = mean, geom = "point", aes(group = Placement), position = position_dodge(width = 0.9), color = "black", size = 5) +
   scale_fill_manual(values = c("C" = "#660000", "E" = "#CC9966"),
     labels = c("C" = "Centre of orchard", "E" = "Edge of orchard")) +
   scale_color_manual(values = c("C" = "#660000", "E" = "#CC9966"),
@@ -721,16 +729,4 @@ SeedSetPredicted <- ggplot(pred, aes(x = x, y = predicted, color = group, fill =
 SeedSetData <- ggarrange(SeedSetLocation, SeedSetPredicted, nrow = 2)
 ggsave(SeedSetData, filename = "Figures/SeedSetData.jpeg", height = 14, width = 14)
 
-
-#############
-RichnessSeedSet3 %>%
-  ggplot(aes(y = (seed_success/seed_total), 
-             x = Abundance)) +
-  geom_smooth(method = "lm") +
-  theme_minimal() +
-    scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1.0), limits = c(0, 1)) +
-  labs(y = "Seed set (ratio)", x = "", title = "a") +
-  theme(axis.text = element_text(size = 14),
-        axis.title = element_text(size = 17),
-        plot.title = element_text(face = "bold", size = 22))
 

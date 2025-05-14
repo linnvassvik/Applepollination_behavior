@@ -133,10 +133,10 @@ OrchardSS2 <- glmmTMB(cbind(seed_success, seed_fail) ~ Orchard_structure * Place
 
 summary(OrchardSS2)
 
-emmeans_results3 <- emmeans(OrchardSS, ~ Orchard_structure * Placement)
+emmeans_results3 <- emmeans(OrchardSS2, ~ Orchard_structure * Placement)
 summary(emmeans_results3)
 pairwise_comparisons3 <- pairs(emmeans_results3)
-DesignTree <- summary(pairwise_comparisons3)
+summary(pairwise_comparisons3)
 
 
 # Seed set and species richness and abundance -----------------------------
@@ -160,7 +160,7 @@ RichAbSS3 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
                     data = RichnessSeedSet3)
 
 summary(RichAbSS3)
-check_model(RichAbSS)
+check_model(RichAbSS3)
 
 
 
