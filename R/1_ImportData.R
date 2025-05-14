@@ -372,6 +372,34 @@ RichnessSeedSet <- AppleDF1 %>%
   mutate(Location = as.factor(Location))
 
 
+#remove honeybees
+species_Richness2 <- StasSpecies %>%
+  filter(Species != 'Apis mellifera') %>% 
+  group_by(Location, Apple_variety) %>%
+  summarise(
+    Species_Richness = n_distinct(Species), 
+    Abundance = n()) %>%
+  ungroup() 
+
+RichnessSeedSet2 <- AppleDF1 %>% 
+  left_join(species_Richness2, by = c("Apple_variety", "Location")) %>%
+  mutate(Location = as.factor(Location))
+
+
+#only honeybees
+species_Richness3 <- StasSpecies %>%
+  filter(Species == 'Apis mellifera') %>% 
+  group_by(Location, Apple_variety) %>%
+  summarise(
+    Species_Richness = n_distinct(Species), 
+    Abundance = n()) %>%
+  ungroup() 
+
+RichnessSeedSet3 <- AppleDF1 %>% 
+  left_join(species_Richness3, by = c("Apple_variety", "Location")) %>%
+  mutate(Location = as.factor(Location))
+
+
 
 # #Abundance
 # PollTot <- Abundance_NoTrap %>%
