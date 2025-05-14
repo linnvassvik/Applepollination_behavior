@@ -722,4 +722,15 @@ SeedSetData <- ggarrange(SeedSetLocation, SeedSetPredicted, nrow = 2)
 ggsave(SeedSetData, filename = "Figures/SeedSetData.jpeg", height = 14, width = 14)
 
 
+#############
+RichnessSeedSet3 %>%
+  ggplot(aes(y = (seed_success/seed_total), 
+             x = Abundance)) +
+  geom_smooth(method = "lm") +
+  theme_minimal() +
+    scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1.0), limits = c(0, 1)) +
+  labs(y = "Seed set (ratio)", x = "", title = "a") +
+  theme(axis.text = element_text(size = 14),
+        axis.title = element_text(size = 17),
+        plot.title = element_text(face = "bold", size = 22))
 
