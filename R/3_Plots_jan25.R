@@ -825,6 +825,71 @@ ggsave(SS_Abundance, filename = "Figures/SS_Abundance.jpeg", height = 10, width 
 
 
 
+
+# Define low and high species richness values
+low_richness <- 10
+high_richness <- 35
+
+# Create prediction grid for both low and high richness
+new_data <- expand.grid(
+  Species_Richness = c(low_richness, high_richness),
+  Abundance = seq(min(RichnessSeedSet2$Abundance), max(RichnessSeedSet2$Abundance), length.out = 100),
+  Orchard_structure = unique(RichnessSeedSet2$Orchard_structure)
+)
+
+# Add dummy Location for prediction
+new_data$Location <- unique(RichnessSeedSet2$Location)[1]
+
+# Predict
+new_data$predicted <- predict(RichAbSS1, newdata = new_data, type = "response", re.form = NA)
+
+# Add label for richness level to control line type
+new_data$Richness_label <- factor(new_data$Species_Richness, 
+                                  levels = c(low_richness, high_richness),
+                                  labels = c("Low richness (10)", "High richness (35)"))
+
+# Plot
+SS_Abundance <- ggplot() +
+  geom_point(data = RichnessSeedSet2,
+             aes(x = Abundance, y = seed_success / seed_total, color = Orchard_structure),
+             alpha = 0.3) +
+  geom_line(data = new_data,
+            aes(x = Abundance, y = predicted, color = Orchard_structure, linetype = Richness_label),
+            size = 1) +
+  labs(x = "Abundance",
+       y = "Predicted Seed Set Ratio",
+       title = "Predicted Seed Set at Low and High Species Richness") +
+  scale_color_manual(values = c("block" = "#660000", "mixed" = "#CC9966"),
+                     labels = c("block" = "Block design", "mixed" = "Integrated design")) +
+  scale_linetype_manual(values = c("dashed", "solid")) +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#########################
+
+
 mean_abundance <- mean(RichnessSeedSet2$Abundance)
 
 new_data2 <- expand.grid(
@@ -854,9 +919,64 @@ SS_Richness <- ggplot() +
 ggsave(SS_Richness, filename = "Figures/SS_Richness.jpeg", height = 10, width = 14)
 
 
+##
+
+
+# Define low and high abundance values
+low_abundance <- 20
+high_abundance <- 300
+
+# Create prediction grid for both low and high abundance
+new_data2 <- expand.grid(
+  Abundance = c(low_abundance, high_abundance),
+  Species_Richness = seq(min(RichnessSeedSet2$Species_Richness), max(RichnessSeedSet2$Species_Richness), length.out = 100),
+  Orchard_structure = unique(RichnessSeedSet2$Orchard_structure)
+)
+
+# Dummy Location value for prediction (to satisfy random effect)
+new_data2$Location <- unique(RichnessSeedSet2$Location)[1]
+
+# Predict on response scale
+new_data2$predicted <- predict(RichAbSS1, newdata = new_data2, type = "response", re.form = NA)
+
+# Label abundance levels as a factor for clearer legend
+new_data2$Abundance_label <- factor(new_data2$Abundance, levels = c(low_abundance, high_abundance),
+                                    labels = c("Low abundance (20)", "High abundance (300)"))
+
+# Plot
+SS_Richness <- ggplot() +
+  geom_point(data = RichnessSeedSet2,
+             aes(x = Species_Richness, y = seed_success / seed_total, color = Orchard_structure),
+             alpha = 0.3) +
+  geom_line(data = new_data2,
+            aes(x = Species_Richness, y = predicted, color = Orchard_structure, linetype = Abundance_label),
+            size = 1) +
+  labs(x = "Species Richness",
+       y = "Predicted Seed Set Ratio",
+       title = "Predicted Seed Set at Low and High Abundance") +
+  scale_color_manual(values = c("block" = "#660000", "mixed" = "#CC9966"),
+                     labels = c("block" = "Block design", "mixed" = "Integrated design")) +
+  scale_linetype_manual(values = c("dashed", "solid")) +
+  theme_minimal()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#############
 
 
 
