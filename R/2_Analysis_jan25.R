@@ -10,13 +10,24 @@ richness_model <- glmmTMB(Species_Richness ~ Location,
                           data = species_RA, 
                           family = poisson)
 
+richness_model2 <- glmmTMB(Species_Richness ~ 1, 
+                          data = species_RA, 
+                          family = poisson)
+
 summary(richness_model)
+anova(richness_model, richness_model2)
+#create a null model, and compare the two models. anova(model1, model2)
 
 abundance_model <- glmmTMB(Abundance ~ Location, 
                            data = species_RA, 
                            family = poisson)
 
+abundance_model2 <- glmmTMB(Abundance ~ 1, 
+                           data = species_RA, 
+                           family = poisson)
+
 summary(abundance_model)
+anova(abundance_model, abundance_model2)
 
 # Use emmeans to compute the marginal means
 emm <- emmeans(abundance_model, ~ Location)
@@ -29,12 +40,32 @@ summary(pairwise_comparisons)
 richness_model2 <- glmmTMB(Species_Richness ~ Where + Trap_color + (1|Location), 
                            data = species_RA, 
                            family = poisson)
+
+richness_model2a <- glmmTMB(Species_Richness ~ Where + (1|Location), 
+                           data = species_RA, 
+                           family = poisson)
+
+richness_model2b <- glmmTMB(Species_Richness ~ Trap_color + (1|Location), 
+                            data = species_RA, 
+                            family = poisson)
+
 summary(richness_model2)
+anova(richness_model2, richness_model2b)
 
 abundance_model2 <- glmmTMB(Abundance ~ Where + Trap_color + (1|Location), 
                             data = species_RA, 
                             family = poisson)
+
+abundance_model2a <- glmmTMB(Abundance ~ Where + (1|Location), 
+                            data = species_RA, 
+                            family = poisson)
+
+abundance_model2b <- glmmTMB(Abundance ~ Trap_color + (1|Location), 
+                            data = species_RA, 
+                            family = poisson)
+
 summary(abundance_model2)
+anova(abundance_model2, abundance_model2b)
 
 # Use emmeans to compute the marginal means
 emm <- emmeans(richness_model2, ~ Where)
@@ -144,23 +175,112 @@ summary(pairwise_comparisons3)
 # AppleSpecies$seed_fail <- round(AppleSpecies$seed_fail)
 # AppleSpecies$seed_total <- round(AppleSpecies$seed_total)
 
-RichAbSS <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness * Abundance + (1|Location),
+#only wild bees
+BlockDesign <- RichnessSeedSet2 %>% 
+  filter(Orchard_structure == 'block')
+
+MixedDesgin <- RichnessSeedSet2 %>% 
+  filter(Orchard_structure == 'mixed')
+
+
+
+RichAbSS1 <- glmmTMB(cbind(seed_success, seed_fail) ~ (Species_Richness * Orchard_structure) + (Abundance * Orchard_structure) + (1|Location),
+                      family = betabinomial(link = "logit"),
+                      data = RichnessSeedSet2)
+
+#colinearity with interaction
+RichAbSS1a <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness + Abundance + (1|Location),
                   family = betabinomial(link = "logit"),
-                  data = RichnessSeedSet)
+                  data = BlockDesign)
+
+RichAbSS1b <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness + Abundance + (1|Location),
+                    family = betabinomial(link = "logit"),
+                    data = MixedDesgin)
+
+summary(RichAbSS1)
+summary(RichAbSS1b)
+
+emmeans_results3 <- emmeans(RichAbSS1, ~ Species_Richness * Orchard_structure)
+summary(emmeans_results3)
+pairwise_comparisons3 <- pairs(emmeans_results3)
+summary(pairwise_comparisons3)
 
 
-#no HB
+
+
+
+
+
+
+#no honeybee
 RichAbSS2 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
-                    family = betabinomial(link = "logit"),
-                    data = RichnessSeedSet2)
+                      family = betabinomial(link = "logit"),
+                      data = RichnessSeedSet2)
 
-#only HB
-RichAbSS3 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+RichAbSS2a <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
                     family = betabinomial(link = "logit"),
-                    data = RichnessSeedSet3)
+                    data = BlockDesign)
+
+RichAbSS2b <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+                     family = betabinomial(link = "logit"),
+                     data = MixedDesgin)
+
+
+
+summary(RichAbSS2a)
+summary(RichAbSS2b)
+
+check_model(RichAbSS2b)
+
+
+#only honeybee
+BlockDesign2 <- RichnessSeedSet3 %>% 
+  filter(Orchard_structure == 'block')
+
+MixedDesgin2 <- RichnessSeedSet3 %>% 
+  filter(Orchard_structure == 'mixed')
+
+RichAbSS3 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance * Orchard_structure + (1|Location),
+                      family = betabinomial(link = "logit"),
+                      data = RichnessSeedSet3)
+
+RichAbSS3c <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+                     family = betabinomial(link = "logit"),
+                     data = RichnessSeedSet3)
+
+
+
+RichAbSS3a <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+                    family = betabinomial(link = "logit"),
+                    data = BlockDesign2)
+
+RichAbSS3b <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+                     family = betabinomial(link = "logit"),
+                     data = MixedDesgin2)
+
 
 summary(RichAbSS3)
-check_model(RichAbSS3)
+summary(RichAbSS3b)
+
+
+emmeans_results3 <- emmeans(RichAbSS3, ~ Abundance * Orchard_structure)
+summary(emmeans_results3)
+pairwise_comparisons3 <- pairs(emmeans_results3)
+summary(pairwise_comparisons3)
+
+check_model(RichAbSS)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -214,3 +334,18 @@ Behaviour %>%
     total = sum(count),
     percentage = (count / total) * 100,
     se = sqrt((percentage * (100 - percentage)) / total))
+
+## mean seed set, abundance and richness per location
+
+RichnessSeedSet %>%
+  mutate(seed_ratio = seed_success / seed_total) %>%      
+  group_by(Location) %>%                                 
+  summarise(mean_seed_ratio = mean(seed_ratio, na.rm = TRUE))
+
+RichnessSeedSet %>%    
+  group_by(Location) %>%                                 
+  summarise(mean_Abundance  = mean(Abundance, na.rm = TRUE))
+
+RichnessSeedSet %>%    
+  group_by(Location) %>%                                 
+  summarise(mean_Species_Richness   = mean(Species_Richness , na.rm = TRUE))

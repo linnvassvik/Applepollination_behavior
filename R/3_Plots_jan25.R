@@ -730,3 +730,165 @@ SeedSetData <- ggarrange(SeedSetLocation, SeedSetPredicted, nrow = 2)
 ggsave(SeedSetData, filename = "Figures/SeedSetData.jpeg", height = 14, width = 14)
 
 
+
+
+#############
+
+## Test, combine seed set, abundance and locations.
+#How much does abundance need to increase to reach highest seed set?
+
+
+############
+
+# Create a new data frame with a range of Abundance values
+new_data <- data.frame(
+  Abundance = seq(min(RichnessSeedSet2$Abundance, na.rm = TRUE),
+                  max(RichnessSeedSet2$Abundance, na.rm = TRUE),
+                  length.out = 100),
+  Location = NA  # Optional if you want population-level (marginal) predictions
+)
+
+# Predict seed success ratio (on response scale)
+new_data$predicted <- predict(RichAbSS2b, newdata = new_data, type = "response", re.form = NA)
+
+intersect_x <- approx(x = new_data$predicted,
+                      y = new_data$Abundance,
+                      xout = 0.67)$y
+
+#wild bees
+
+Abundance_seedset <- ggplot() +
+  geom_point(data = RichnessSeedSet2,
+             aes(x = Abundance, y = seed_success / seed_total),
+             alpha = 0, #change this if we want the points to be visible
+             color = "#7EA092") +
+  geom_line(data = new_data,
+            aes(x = Abundance, y = predicted),
+            color = "#7EA092", size = 1.2) +
+  geom_hline(yintercept = 0.67, size = 1) +
+  geom_vline(xintercept = 550, linetype="dotted", size = 1.2, color = "#D39CA2") +
+  geom_vline(xintercept = 33, linetype="dashed", size = 1.2, color = "#D39CA2") +
+  geom_vline(xintercept = 77, linetype="dashed", size = 1.2, color = "#D39CA2") +
+  labs(x = "Relative abundance", y = "Seed set (ratio)", title = "") +
+  geom_segment(aes(x = intersect_x, xend = intersect_x,
+                   y = 0, yend = 0.67),
+               color = "black", linetype = "solid", size = 0.5) +
+  annotate("text", x = intersect_x, y = 0.67,
+           label = paste0("", round(intersect_x, 1)),
+           hjust = 0.3, vjust = 26, size = 8) +
+  annotate("text", x = 550, y = 0.95, label = "Djønno", angle = 0, hjust = 1.1, vjust = 1, size = 8, color = "#D39CA2") +
+  annotate("text", x = 33, y = 0.95, label = "Høyen", angle = 0, hjust = 1.1, vjust = 1, size = 8, color = "#D39CA2") +
+  annotate("text", x = 77, y = 0.95, label = "Urheim", angle = 0, hjust = -0.15, vjust = 1, size = 8, color = "#D39CA2") +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 14),
+        axis.title = element_text(size = 17))
+
+ggsave(Abundance_seedset, filename = "Figures/Abundance_seedset.jpeg", height = 10, width = 14)
+
+
+
+
+
+
+
+
+# Fix Species_Richness at median
+mean_richness <- mean(RichnessSeedSet2$Species_Richness)
+
+new_data <- expand.grid(
+  Species_Richness = mean_richness,
+  Abundance = seq(min(RichnessSeedSet2$Abundance), max(RichnessSeedSet2$Abundance), length.out = 100),
+  Orchard_structure = unique(RichnessSeedSet2$Orchard_structure)
+)
+
+new_data$Location <- unique(RichnessSeedSet2$Location)[1]
+
+new_data$predicted <- predict(RichAbSS1, newdata = new_data, type = "response", re.form = NA)
+
+SS_Abundance <- ggplot() +
+  geom_point(data = RichnessSeedSet2,
+             aes(x = Abundance, y = seed_success / seed_total, color = Orchard_structure),
+             alpha = 0.3) +
+  geom_line(data = new_data,
+            aes(x = Abundance, y = predicted, color = Orchard_structure),
+            size = 1) +
+  labs(x = "Abundance",
+       y = "Predicted Seed Set Ratio",
+       title = paste("Prediction at Species Richness =", round(mean_richness, 1))) +
+  scale_color_manual(values = c("block" = "#660000", "mixed" = "#CC9966"),
+                     labels = c("block" = "Block design", "mixed" = "Integrated design")) +
+  theme_minimal()
+
+ggsave(SS_Abundance, filename = "Figures/SS_Abundance.jpeg", height = 10, width = 14)
+
+
+
+
+
+mean_abundance <- mean(RichnessSeedSet2$Abundance)
+
+new_data2 <- expand.grid(
+  Abundance = mean_abundance,
+  Species_Richness = seq(min(RichnessSeedSet2$Species_Richness), max(RichnessSeedSet2$Species_Richness), length.out = 100),
+  Orchard_structure = unique(RichnessSeedSet2$Orchard_structure)
+)
+
+new_data2$Location <- unique(RichnessSeedSet2$Location)[1]
+
+new_data2$predicted <- predict(RichAbSS1, newdata = new_data2, type = "response", re.form = NA)
+
+SS_Richness <- ggplot() +
+  geom_point(data = RichnessSeedSet2,
+             aes(x = Species_Richness, y = seed_success / seed_total, color = Orchard_structure),
+             alpha = 0.3) +
+  geom_line(data = new_data2,
+            aes(x = Species_Richness, y = predicted, color = Orchard_structure),
+            size = 1) +
+  labs(x = "Species Richness",
+       y = "Predicted Seed Set Ratio",
+       title = paste("Prediction at abundance =", round(mean_abundance, 1))) +
+  scale_color_manual(values = c("block" = "#660000", "mixed" = "#CC9966"),
+                     labels = c("block" = "Block design", "mixed" = "Integrated design")) +
+  theme_minimal()
+
+ggsave(SS_Richness, filename = "Figures/SS_Richness.jpeg", height = 10, width = 14)
+
+
+
+
+
+
+
+
+
+
+######### HONEYBEES
+
+# Generate prediction data
+new_data3 <- expand.grid(
+  Abundance = seq(min(RichnessSeedSet3$Abundance), max(RichnessSeedSet3$Abundance), length.out = 100),
+  Orchard_structure = unique(RichnessSeedSet3$Orchard_structure)
+)
+
+# Fix Location to a known level (used to satisfy random effect)
+new_data3$Location <- unique(RichnessSeedSet3$Location)[1]
+
+# Predict
+new_data3$predicted <- predict(RichAbSS3, newdata = new_data3, type = "response", re.form = NA)
+
+# Plot
+HoneybeeSS_abundance <- ggplot() +
+  geom_point(data = RichnessSeedSet3,
+             aes(x = Abundance, y = seed_success / (seed_success + seed_fail), color = Orchard_structure),
+             alpha = 0.3) +
+  geom_line(data = new_data3,
+            aes(x = Abundance, y = predicted, color = Orchard_structure),
+            size = 1) +
+  labs(x = "Abundance",
+       y = "Predicted Seed Set Ratio",
+       title = "Predicted Seed Set Across Abundance by Orchard Structure") +
+  scale_color_manual(values = c("block" = "#660000", "mixed" = "#CC9966"),
+                     labels = c("block" = "Block design", "mixed" = "Integrated design")) +
+  theme_minimal()
+
+ggsave(HoneybeeSS_abundance, filename = "Figures/HoneybeeSS_abundance.jpeg", height = 10, width = 14)
