@@ -176,110 +176,31 @@ summary(pairwise_comparisons3)
 # AppleSpecies$seed_total <- round(AppleSpecies$seed_total)
 
 #only wild bees
-BlockDesign <- RichnessSeedSet2 %>% 
-  filter(Orchard_structure == 'block')
 
-MixedDesgin <- RichnessSeedSet2 %>% 
-  filter(Orchard_structure == 'mixed')
-
-
-
-RichAbSS1 <- glmmTMB(cbind(seed_success, seed_fail) ~ (Species_Richness * Orchard_structure) + (Abundance * Orchard_structure) + (1|Location),
+RichAbSS1 <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness * Abundance + (1|Location),
                       family = betabinomial(link = "logit"),
                       data = RichnessSeedSet2)
 
-#colinearity with interaction
-RichAbSS1a <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness + Abundance + (1|Location),
-                  family = betabinomial(link = "logit"),
-                  data = BlockDesign)
 
-RichAbSS1b <- glmmTMB(cbind(seed_success, seed_fail) ~ Species_Richness + Abundance + (1|Location),
-                    family = betabinomial(link = "logit"),
-                    data = MixedDesgin)
 
 summary(RichAbSS1)
-summary(RichAbSS1b)
-
-emmeans_results3 <- emmeans(RichAbSS1, ~ Species_Richness * Orchard_structure)
-summary(emmeans_results3)
-pairwise_comparisons3 <- pairs(emmeans_results3)
-summary(pairwise_comparisons3)
 
 
 
 
-
-
-
-
-#no honeybee
-RichAbSS2 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
-                      family = betabinomial(link = "logit"),
-                      data = RichnessSeedSet2)
-
-RichAbSS2a <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
-                    family = betabinomial(link = "logit"),
-                    data = BlockDesign)
-
-RichAbSS2b <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
-                     family = betabinomial(link = "logit"),
-                     data = MixedDesgin)
-
-
-
-summary(RichAbSS2a)
-summary(RichAbSS2b)
-
-check_model(RichAbSS2b)
+# #only wild bee abundance
+# RichAbSS2 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
+#                       family = betabinomial(link = "logit"),
+#                       data = RichnessSeedSet2)
 
 
 #only honeybee
-BlockDesign2 <- RichnessSeedSet3 %>% 
-  filter(Orchard_structure == 'block')
-
-MixedDesgin2 <- RichnessSeedSet3 %>% 
-  filter(Orchard_structure == 'mixed')
-
-RichAbSS3 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance * Orchard_structure + (1|Location),
+RichAbSS3 <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
                       family = betabinomial(link = "logit"),
                       data = RichnessSeedSet3)
 
-RichAbSS3c <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
-                     family = betabinomial(link = "logit"),
-                     data = RichnessSeedSet3)
-
-
-
-RichAbSS3a <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
-                    family = betabinomial(link = "logit"),
-                    data = BlockDesign2)
-
-RichAbSS3b <- glmmTMB(cbind(seed_success, seed_fail) ~ Abundance + (1|Location),
-                     family = betabinomial(link = "logit"),
-                     data = MixedDesgin2)
-
 
 summary(RichAbSS3)
-summary(RichAbSS3b)
-
-
-emmeans_results3 <- emmeans(RichAbSS3, ~ Abundance * Orchard_structure)
-summary(emmeans_results3)
-pairwise_comparisons3 <- pairs(emmeans_results3)
-summary(pairwise_comparisons3)
-
-check_model(RichAbSS)
-
-
-
-
-
-
-
-
-
-
-
 
 
 
