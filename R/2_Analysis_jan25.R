@@ -270,3 +270,7 @@ RichnessSeedSet %>%
 RichnessSeedSet %>%    
   group_by(Location) %>%                                 
   summarise(mean_Species_Richness   = mean(Species_Richness , na.rm = TRUE))
+
+OnlyPollinators %>%
+  group_by(Location) %>%
+  summarise(total_species = n_distinct(Species))
