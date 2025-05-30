@@ -508,7 +508,7 @@ SpeciesSando <- OnlyPollinators %>%
   scale_x_log10(breaks = c(1, 5, 10, 50, 100, 500)) +
   expand_limits(x = 1) + 
   labs(
-    x = "log (species count)",
+    x = "log (Number of individuals)",
     y = "",
     fill = "", 
     title = "Sando") +
@@ -576,7 +576,7 @@ SpeciesDjønno <- OnlyPollinators %>%
   scale_x_log10(breaks = c(1, 5, 10, 50, 100, 500)) +
   expand_limits(x = 1) + 
   labs(
-    x = "log (species count)",
+    x = "log (Number of individuals)",
     y = "",
     fill = "", 
     title = "Djønno") +

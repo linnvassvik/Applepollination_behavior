@@ -30,7 +30,7 @@ summary(abundance_model)
 anova(abundance_model, abundance_model2)
 
 # Use emmeans to compute the marginal means
-emm <- emmeans(abundance_model, ~ Location)
+emm <- emmeans(richness_model, ~ Location)
 pairwise_comparisons <- contrast(emm, method = "pairwise", adjust = "tukey")
 summary(pairwise_comparisons)
 
@@ -68,7 +68,7 @@ summary(abundance_model2)
 anova(abundance_model2, abundance_model2b)
 
 # Use emmeans to compute the marginal means
-emm <- emmeans(richness_model2, ~ Where)
+emm <- emmeans(richness_model2, ~  Where)
 pairwise_comparisons <- contrast(emm, method = "pairwise", adjust = "tukey")
 summary(pairwise_comparisons)
 
@@ -85,6 +85,12 @@ ForagingTime <- glmmTMB(log(Forage_time_s) ~ Subject + (1|Location),
                         data = Behaviour_foraging, 
                         family = gaussian)
 
+ForagingTime2 <- glmmTMB(log(Forage_time_s) ~ 1 + (1|Location), 
+                        data = Behaviour_foraging, 
+                        family = gaussian)
+
+anova(ForagingTime, ForagingTime2)
+
 summary(ForagingTime)
 
 emm <- emmeans(ForagingTime, ~ Subject)
@@ -98,6 +104,11 @@ StigmaContact <- glmmTMB(cbind(stigma_contact, no_stigma_contact) ~ Subject + (1
                          family = betabinomial(link = "logit"),
                          data = Behaviour_stigma)
 
+StigmaContact2 <- glmmTMB(cbind(stigma_contact, no_stigma_contact) ~ 1 + (1|Location),
+                         family = betabinomial(link = "logit"),
+                         data = Behaviour_stigma)
+
+anova(StigmaContact,StigmaContact2)
 
 summary(StigmaContact)
 check_model(StigmaContact)
@@ -132,6 +143,12 @@ Distance <- glmmTMB(log(percentage) ~ Behavior * Subject + (1|Location),
                      data = Behaviour5, 
                      family = gaussian)
 
+Distance2 <- glmmTMB(log(percentage) ~  Subject + (1|Location), 
+                    data = Behaviour5, 
+                    family = gaussian)
+
+anova(Distance, Distance2)
+
 summary(Distance)
 
 
@@ -148,6 +165,11 @@ LocationSS <- glmmTMB(cbind(seed_success, seed_fail) ~ Location,
                       family = betabinomial(link = "logit"),
                       data = AppleDF1)
 
+LocationSS2 <- glmmTMB(cbind(seed_success, seed_fail) ~ 1,
+                      family = betabinomial(link = "logit"),
+                      data = AppleDF1)
+
+anova(LocationSS, LocationSS2)
 
 summary(LocationSS)
 
